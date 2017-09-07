@@ -5,10 +5,7 @@
  */
 package pilha.estrutura;
 
-/**
- *
- * @author proprietario
- */
+
 public class Pilha {
     class No{
         No ant = null;
