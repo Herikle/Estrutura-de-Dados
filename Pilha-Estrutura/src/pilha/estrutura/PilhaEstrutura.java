@@ -1,9 +1,6 @@
 package pilha.estrutura;
 
-/**
- *
- * @author proprietario
- */
+
 public class PilhaEstrutura {
 
     /**
