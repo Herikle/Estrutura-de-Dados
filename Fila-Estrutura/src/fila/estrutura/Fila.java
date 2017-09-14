@@ -2,7 +2,7 @@ package fila.estrutura;
 
 
 public class Fila {
-    class No{
+    private class No{
         No next;
         int item;
     }
@@ -21,10 +21,12 @@ public class Fila {
     {
         if (isEmpty()) throw new FilaVaziaException("A fila está vazia");
         int x = head.next.item;
-        head.next = head.next.next;
+        No sub = head.next.next;
+        head.next.next = null;
+        head.next = sub;
         size--;
         return x;
-    }
+    } 
     public int first() throws FilaVaziaException
     {
         if (isEmpty()) throw new FilaVaziaException("A fila está vazia");

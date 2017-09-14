@@ -20,7 +20,9 @@ public class Pilha {
     {
         if(last.ant == null) throw new PilhaException("Pilha está vazia");
         int lastitem = last.valor;
-        last = last.ant;
+        No sub = last.ant;
+        last.ant = null;
+        last = sub;
         size--;
         return lastitem;
     }

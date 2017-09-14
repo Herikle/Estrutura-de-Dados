@@ -2,7 +2,7 @@ package fila.array;
 
 
 public class Fila {
-    private int [] itens = new int[10];
+    private int [] itens = new int[10];  //resolver tamanho aqui
     private int i=0, f=0;
     public void queue(int x)
     {
