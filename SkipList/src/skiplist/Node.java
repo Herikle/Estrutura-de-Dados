@@ -10,11 +10,11 @@ public class Node implements Comparable<Node> {
         private Node above;
         private Node below;
         private final boolean posinfinity;
-        private final boolean negnifinity;
+        private final boolean neginfinity;
         public Node(boolean posinfinity, boolean neginfinity)
         {
             this.posinfinity = posinfinity;
-            this.negnifinity = neginfinity;
+            this.neginfinity = neginfinity;
             this.right = null;
             this.left = null;
             this.above = null;
@@ -69,7 +69,14 @@ public class Node implements Comparable<Node> {
     public void setBelow(Node below) {
         this.below = below;
     }
-        
+    public boolean isPosInfinity()
+    {
+        return this.posinfinity;
+    }
+     public boolean isNegInfinity()
+    {
+        return this.neginfinity;
+    }
         
         @Override
         public int compareTo(Node t) {
@@ -78,7 +85,7 @@ public class Node implements Comparable<Node> {
             {
                 return 1;
             }
-            else if(this.negnifinity)
+            else if(this.neginfinity)
             {
                 return 0;
             }           

@@ -30,12 +30,36 @@ public class SkipListStruct {
         }while(randnum !=0);
         insert(alt,newNode);       
     }
+    public Node search(int key)
+    {
+        return search(key, head);
+    }
     
     public int getHeigth()
     {
         return this.heigth;
     }
     //--------------------------------PRIVATE METHODS ----------------------------------------
+    private Node search(int key, Node current)
+    {
+        if (current != null)
+        {
+            if(!current.getRight().isPosInfinity())
+            {
+                if(key>current.getRight().getKey())
+                {
+                    return search(key, current.getRight());
+                }
+                else if(key<current.getRight().getKey())
+                {
+                    return search(key, current.getBelow());
+                }else
+                    return current.getRight();
+            }
+            return search(key, current.getBelow());
+        }
+        return null;
+    }
     
     private void insert(int alt, Node newNode)
     {
