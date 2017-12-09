@@ -8,7 +8,8 @@ public class SkipListStruct {
     private Node tail;
     private final Node basepos = new Node(true,false);
     private final Node baseneg = new Node(false,true);
-    private int heigth=0;
+    private int heigth = 0;
+    private int size = 0;
     public SkipListStruct()
     {     
         baseneg.setRight(basepos);
@@ -28,7 +29,8 @@ public class SkipListStruct {
             randnum = rand.nextInt(2);
             if(randnum==1) alt++;
         }while(randnum !=0);
-        insert(alt,newNode);       
+        insert(alt,newNode);
+        size++;
     }
     public Object search(int key)
     {
@@ -40,7 +42,7 @@ public class SkipListStruct {
     
     public int getHeigth()
     {
-        return this.heigth;
+        return this.heigth+1;
     }
     public Object removenode(int key)
     {
@@ -50,11 +52,58 @@ public class SkipListStruct {
         {
             toreturn = toremove.getElement();
             removenode(toremove);
+            size--;
             return toreturn;
         }
         
-        return "Chave não encontrada.";
+        return "Chave não encontrada.,,,";
         
+    }
+    public void PrintSkipList()
+    {
+        int x = this.heigth+1;
+        int y = this.size+2;
+        Object[][] matrix = new Object[x][y];
+        for(int xx = 0; xx < x;xx++)
+        {
+            for(int yy = 0; yy < y; yy++)
+            {
+                matrix[xx][yy] = String.format("%5c", '-');
+            }
+        }
+        
+       Node current = this.baseneg;
+       
+       for(int yy = 0;yy<y;yy++)
+       {
+           int xx = x-1;
+           Node nextmove = current.getRight();
+           while(current!=null)
+           {
+               if(current.isNegInfinity())
+               {
+                   matrix[xx][yy] = String.format("%5s", "-oo");
+               }else if(current.isPosInfinity())
+               {
+                   matrix[xx][yy] = String.format("%5s", "+oo");
+               }else
+               {
+                   matrix[xx][yy] = String.format("%5d", current.getKey());
+               }
+               xx--;
+               current = current.getAbove();
+           }
+           current = nextmove;
+       }
+        
+        for(int xx = 0; xx < x;xx++)
+        {
+            for(int yy = 0; yy < y; yy++)
+            {
+                System.out.print(matrix[xx][yy]);
+            }
+            System.out.println();
+        }
     }
     //--------------------------------PRIVATE METHODS ----------------------------------------
     private void removenode(Node toremove)
@@ -70,8 +119,7 @@ public class SkipListStruct {
            toremove.setBelow(null);
            removenode(aux);
        }
-    }
-    
+    }    
     private Node search(int key, Node current)
     {
         if (current != null)

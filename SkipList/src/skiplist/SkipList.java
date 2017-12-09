@@ -17,10 +17,12 @@ public class SkipList {
        skip.insert(5, "Rapaz");
        skip.insert(2, "Bing");
        skip.insert(35, "Google");
+       skip.insert(180, "Grande");
        System.out.println(skip.search(10));
        System.out.println(skip.removenode(15));
        System.out.println(skip.search(15));
-       System.out.println(skip.getHeigth());
+       System.out.println(skip.getHeigth());      
+       skip.PrintSkipList();     
     }
     
 }
