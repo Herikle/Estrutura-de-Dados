@@ -45,11 +45,15 @@ public class SkipListStruct {
     public Object removenode(int key)
     {
         Node toremove = search(key, head);
-        Object toreturn = toremove.getElement();
+        Object toreturn;
+        if (toremove!=null)
+        {
+            toreturn = toremove.getElement();
+            removenode(toremove);
+            return toreturn;
+        }
         
-        removenode(toremove);
-        
-        return toreturn;
+        return "Chave não encontrada.";
         
     }
     //--------------------------------PRIVATE METHODS ----------------------------------------
