@@ -17,7 +17,9 @@ public class SkipList {
        skip.insert(5, "Rapaz");
        skip.insert(2, "Bing");
        skip.insert(35, "Google");
-       System.out.println(skip.search(10).getElement());
+       System.out.println(skip.search(10));
+       System.out.println(skip.removenode(15));
+       System.out.println(skip.search(15));
        System.out.println(skip.getHeigth());
     }
     

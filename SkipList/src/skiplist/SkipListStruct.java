@@ -30,16 +30,44 @@ public class SkipListStruct {
         }while(randnum !=0);
         insert(alt,newNode);       
     }
-    public Node search(int key)
+    public Object search(int key)
     {
-        return search(key, head);
+        Node toreturn = search(key, head);
+        if (toreturn!=null) return toreturn.getElement();
+        
+        return "Chave não encontrada";
     }
     
     public int getHeigth()
     {
         return this.heigth;
     }
+    public Object removenode(int key)
+    {
+        Node toremove = search(key, head);
+        Object toreturn = toremove.getElement();
+        
+        removenode(toremove);
+        
+        return toreturn;
+        
+    }
     //--------------------------------PRIVATE METHODS ----------------------------------------
+    private void removenode(Node toremove)
+    {
+       if(toremove!=null)
+       {
+           toremove.getLeft().setRight(toremove.getRight());
+           toremove.getRight().setLeft(toremove.getLeft());
+           toremove.setLeft(null);
+           toremove.setRight(null);
+           Node aux = toremove.getBelow();
+           toremove.setAbove(null);
+           toremove.setBelow(null);
+           removenode(aux);
+       }
+    }
+    
     private Node search(int key, Node current)
     {
         if (current != null)
