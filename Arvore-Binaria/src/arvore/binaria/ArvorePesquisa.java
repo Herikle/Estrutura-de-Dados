@@ -143,7 +143,7 @@ public class ArvorePesquisa {
           {
             p = p.dir;
           }
-          else p.esq = doisFilhos (p,p.dir);
+          else doisFilhos (p,p.dir);
       }
       return p;
     }
@@ -164,7 +164,7 @@ public class ArvorePesquisa {
         {
             q.chave = r.chave; 
             q.elemento = r.elemento;
-            r = r.dir;
+            q.dir = r.dir;           
         }
         return r;
     }
