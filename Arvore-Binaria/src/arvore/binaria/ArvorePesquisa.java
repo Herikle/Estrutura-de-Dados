@@ -7,7 +7,7 @@ public class ArvorePesquisa {
     private class No
     {
         Object elemento;
-        int chave;
+        int chave, FB;
         No esq, dir,pai;
     }
     private No raiz;
@@ -45,7 +45,7 @@ public class ArvorePesquisa {
         this.Inorder(raiz, array);
         for(int x = 0; x < this.size;x++)
         {
-            System.out.println(array.get(x).chave+" : "+array.get(x).elemento+" |Altura: " + this.AlturaNo(array.get(x)));
+            System.out.println(array.get(x).chave+" : "+array.get(x).elemento+" | Altura: " + this.AlturaNo(array.get(x)) + " | FB: " + array.get(x).FB);
         }
         
     }
@@ -119,6 +119,7 @@ public class ArvorePesquisa {
             p.elemento = elemento; p.chave = chave;
             if (pai!=null) p.pai = pai;
             p.esq = null; p.dir = null;
+            changeFb(p, true);
         }
         else if (chave > p.chave) p.dir = insere(chave,elemento,p.dir,p);
         else if (chave < p.chave) p.esq = insere(chave,elemento,p.esq,p);
@@ -135,13 +136,20 @@ public class ArvorePesquisa {
           p.esq = retira (chave,p.esq);
       else
       {
+          changeFb(p,false);
           if (p.dir == null) 
           {
-            p = p.esq;
+              if(p.pai!=null)
+                p.pai.esq = p.esq;
+              else
+                  p = p.esq;
           }
           else if (p.esq == null) 
           {
-            p = p.dir;
+              if(p.pai.dir!=null)
+                p.pai.dir = p.dir;
+              else
+                  p = p.dir;
           }
           else doisFilhos (p,p.dir);
       }
@@ -163,8 +171,16 @@ public class ArvorePesquisa {
         else
         {
             q.chave = r.chave; 
-            q.elemento = r.elemento;
-            q.dir = r.dir;           
+            q.elemento = r.elemento; 
+            if(q.dir == r)
+                q.dir = null;
+            try{
+                r = r.dir;
+            }
+            catch(NullPointerException ex)
+            {
+                r = null;
+            }
         }
         return r;
     }
@@ -179,7 +195,7 @@ public class ArvorePesquisa {
     private void PreencheMatriz(Object[][] matriz, int pos, int tam, No no)
     {
         int alt = this.AlturaNo(no);
-        matriz[alt][pos] = no.chave;
+        matriz[alt][pos] = "A"+no.chave;
         if(no.dir!=null)
         {
             if (alt!=0)
@@ -206,4 +222,36 @@ public class ArvorePesquisa {
             
         return Direita+1;              
     }
+    
+    private void changeFb(No no,boolean insert)
+    {
+        if(insert)
+        {
+            while(no.pai!=null){
+                no.pai.FB += isLeft(no)? 1 : -1 ;
+                if(no.pai.FB==0){
+                    break;
+                }
+                no = no.pai;
+            }
+        }else
+        {
+            while(no.pai!=null)
+            {
+                no.pai.FB += isLeft(no)? -1 : 1 ;
+                if(no.pai.FB!=0)
+                {
+                    break;
+                }
+                no = no.pai;
+            }
+        }
+    }
+    
+    
+    private boolean isLeft(No no)
+    {
+        return no.pai.chave>no.chave;
+    }
+    
 }
