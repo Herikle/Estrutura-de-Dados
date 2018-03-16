@@ -1,18 +1,17 @@
-package arvore.binaria;
-
+package arvoreavl;
 import static java.lang.Math.pow;
 import java.util.ArrayList;
 
-public class ArvorePesquisa {
+public class Arvore_AVL {
     private class No
     {
         Object elemento;
-        int chave;
+        int chave, FB;
         No esq, dir,pai;
     }
     private No raiz;
     private int size;
-    public ArvorePesquisa()
+    public Arvore_AVL()
     {
         this.raiz = null;
     
@@ -45,7 +44,7 @@ public class ArvorePesquisa {
         this.Inorder(raiz, array);
         for(int x = 0; x < this.size;x++)
         {
-            System.out.println(array.get(x).chave+" : "+array.get(x).elemento+" | Altura: " + this.AlturaNo(array.get(x)));
+            System.out.println(array.get(x).chave+" : "+array.get(x).elemento+" | Altura: " + this.AlturaNo(array.get(x)) + " | FB: " + array.get(x).FB);
         }
         
     }
@@ -119,6 +118,7 @@ public class ArvorePesquisa {
             p.elemento = elemento; p.chave = chave;
             if (pai!=null) p.pai = pai;
             p.esq = null; p.dir = null;
+            changeFb(p, true);
         }
         else if (chave > p.chave) p.dir = insere(chave,elemento,p.dir,p);
         else if (chave < p.chave) p.esq = insere(chave,elemento,p.esq,p);
@@ -137,6 +137,7 @@ public class ArvorePesquisa {
       {
           if (p.dir == null) 
           {
+              changeFb(p,false);
               if(p.esq!=null){
                   p.esq.pai = p.pai;
                   p = p.esq;
@@ -146,6 +147,7 @@ public class ArvorePesquisa {
           }
           else if (p.esq == null) 
           {
+              changeFb(p,false);
               if(p.dir!=null){
                   p.dir.pai = p.pai;
                   p = p.dir;
@@ -176,6 +178,7 @@ public class ArvorePesquisa {
             if(q.dir == r)
                 q.dir = null;
             try{
+                changeFb(r,false);
                 r = r.dir;
             }
             catch(NullPointerException ex)
@@ -223,5 +226,41 @@ public class ArvorePesquisa {
             
         return Direita+1;              
     }
-
+    
+    private void changeFb(No no,boolean insert)
+    {
+        if(insert)
+        {
+            while(no.pai!=null){
+                no.pai.FB += isLeft(no)? 1 : -1 ;
+                if(no.pai.FB==0){
+                    break;
+                }
+                no = no.pai;
+            }
+        }else
+        {
+            while(no.pai!=null)
+            {
+                no.pai.FB += isLeft(no)? -1 : 1 ;
+                if(no.pai.FB!=0)
+                {
+                    break;
+                }
+                no = no.pai;
+            }
+        }
+    }
+    
+    private boolean isLeft(No no)
+    {
+        return no.pai.chave>no.chave;
+    }
+    
+    
+    private void RightRotationLeft(No no){
+        
+        
+    }
+    
 }
