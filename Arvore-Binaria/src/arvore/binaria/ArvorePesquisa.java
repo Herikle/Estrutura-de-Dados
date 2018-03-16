@@ -136,19 +136,23 @@ public class ArvorePesquisa {
           p.esq = retira (chave,p.esq);
       else
       {
-          changeFb(p,false);
           if (p.dir == null) 
           {
-              if(p.pai!=null)
-                p.pai.esq = p.esq;
-              else
+              changeFb(p,false);
+              if(p.esq!=null){
+                  p.esq.pai = p.pai;
                   p = p.esq;
+              }else
+                  p = p.esq;
+              
           }
           else if (p.esq == null) 
           {
-              if(p.pai.dir!=null)
-                p.pai.dir = p.dir;
-              else
+              changeFb(p,false);
+              if(p.dir!=null){
+                  p.dir.pai = p.pai;
+                  p = p.dir;
+              }else
                   p = p.dir;
           }
           else doisFilhos (p,p.dir);
@@ -175,6 +179,7 @@ public class ArvorePesquisa {
             if(q.dir == r)
                 q.dir = null;
             try{
+                changeFb(r,false);
                 r = r.dir;
             }
             catch(NullPointerException ex)
@@ -195,7 +200,7 @@ public class ArvorePesquisa {
     private void PreencheMatriz(Object[][] matriz, int pos, int tam, No no)
     {
         int alt = this.AlturaNo(no);
-        matriz[alt][pos] = "A"+no.chave;
+        matriz[alt][pos] = no.chave;
         if(no.dir!=null)
         {
             if (alt!=0)
