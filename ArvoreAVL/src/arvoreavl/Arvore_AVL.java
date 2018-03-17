@@ -8,6 +8,19 @@ public class Arvore_AVL {
         Object elemento;
         int chave, FB;
         No esq, dir,pai;
+        public No(Object elemento, int chave,No esq,No dir,No pai){
+            this.elemento = elemento;
+            this.chave = chave;
+            this.esq = esq;
+            this.dir = dir;
+            this.pai = pai;
+        }
+        public void setDir(No no){
+            this.dir = no;
+        }
+        public void setEsq(No no){
+            this.esq = no;
+        }
     }
     private No raiz;
     private int size;
@@ -114,15 +127,20 @@ public class Arvore_AVL {
     {
         if (p==null)
         {
-            p = new No();
-            p.elemento = elemento; p.chave = chave;
-            if (pai!=null) p.pai = pai;
-            p.esq = null; p.dir = null;
+            p = new No(elemento, chave,null,null,pai);
+            if(pai!=null){
+                if(isLeft(p))
+                {
+                    pai.setEsq(p);
+                }else
+                    pai.setDir(p);
+            }
             changeFb(p, true);
         }
         else if (chave > p.chave) p.dir = insere(chave,elemento,p.dir,p);
         else if (chave < p.chave) p.esq = insere(chave,elemento,p.esq,p);
         else System.out.println("Erro: Chave já existente");
+        
         return p;
     }
     private No retira (int chave,No p)
@@ -236,7 +254,14 @@ public class Arvore_AVL {
                 if(no.pai.FB==0){
                     break;
                 }
+                else if(no.pai.FB==-2)
+                {
+                    if(no.pai.dir.FB<=0)
+                        SLR(no.pai);
+                }
+                    
                 no = no.pai;
+                if(no==null) break;
             }
         }else
         {
@@ -258,9 +283,15 @@ public class Arvore_AVL {
     }
     
     
-    private void RightRotationLeft(No no){
-        
-        
+    private void SLR(No no){
+        No aux = no.dir;
+        aux.esq.pai = no;
+        no.dir = aux.esq;
+        No pai = no.pai;
+        no.pai = aux;
+        aux.pai = pai;
+        aux.esq = no;
+        if(aux.pai==null) this.raiz = aux;
     }
     
 }
