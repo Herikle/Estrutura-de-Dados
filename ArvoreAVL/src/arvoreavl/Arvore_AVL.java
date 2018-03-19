@@ -26,8 +26,7 @@ public class Arvore_AVL {
     private int size;
     public Arvore_AVL()
     {
-        this.raiz = null;
-    
+        raiz = null;
     }  
     public int size()
     {
@@ -43,7 +42,10 @@ public class Arvore_AVL {
     }
     public void insere(int chave,Object elemento)
     {
-       this.raiz = this.insere(chave, elemento, raiz,null);
+       if (this.raiz == null)
+            this.raiz = this.insere(chave, elemento, this.raiz,null);
+       else
+           this.insere(chave, elemento, this.raiz,null);
        this.size++;
     }
     public void retira (int chave)
@@ -137,8 +139,8 @@ public class Arvore_AVL {
             }
             changeFb(p, true);
         }
-        else if (chave > p.chave) p.dir = insere(chave,elemento,p.dir,p);
-        else if (chave < p.chave) p.esq = insere(chave,elemento,p.esq,p);
+        else if (chave > p.chave) insere(chave,elemento,p.dir,p);
+        else if (chave < p.chave) insere(chave,elemento,p.esq,p);
         else System.out.println("Erro: Chave já existente");
         
         return p;
@@ -283,9 +285,10 @@ public class Arvore_AVL {
     }
     
     
-    private void SLR(No no){
+    private void SLR(No no){  //falta alguns detalhes na rotação
         No aux = no.dir;
-        aux.esq.pai = no;
+        if(aux.esq!=null)
+            aux.esq.pai = no; 
         no.dir = aux.esq;
         No pai = no.pai;
         no.pai = aux;
