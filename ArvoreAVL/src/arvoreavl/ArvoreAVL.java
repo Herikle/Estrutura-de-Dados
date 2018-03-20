@@ -19,11 +19,15 @@ public class ArvoreAVL {
         Arvore_AVL arvore = new Arvore_AVL();   
         int choose,chave;
         Object objeto;
-        arvore.insere(32,32);
-        arvore.insere(31,31);
-        arvore.insere(35,35);
-        arvore.insere(33,33);
-        arvore.insere(36,36);
+        
+        for(int x = 1;x<=20;x++)
+            arvore.insere(x, x);
+        
+        /*arvore.insere(50,50);
+        arvore.insere(90,90);
+        arvore.insere(20,20);
+        arvore.insere(10,10);
+        arvore.insere(40,40);*/
         System.out.println("1 - Inserir\n2 - Remover\n3 - Pesquisar\n4 - Imprimir\n5 - Ver altura de um nó\n6 - Profundidade da arvore\n7 - Imprimir Arvore\n");
         choose = in.nextInt();    
         while(choose!=0)

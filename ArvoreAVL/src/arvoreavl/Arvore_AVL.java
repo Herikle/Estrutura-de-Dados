@@ -251,17 +251,38 @@ public class Arvore_AVL {
     {
         if(insert)
         {
-            while(no.pai!=null){
+            OUTER:
+            while (no.pai!=null) {
                 no.pai.FB += isLeft(no)? 1 : -1 ;
-                if(no.pai.FB==0){
-                    break;
+                switch (no.pai.FB) {
+                    case 0:
+                        break OUTER;
+                    case -2:
+                        if (no.pai.dir.FB<=0) {
+                            SLR(no.pai);
+                            break OUTER;
+                        }else
+                        {
+                            No guarda = no.pai;
+                            SRR(no.pai.dir);
+                            SLR(guarda);
+                        }
+                        break;
+                    case 2:
+                        if (no.pai.esq.FB>=0) {
+                            SRR(no.pai);
+                            break OUTER;
+                        }
+                        else
+                        {
+                            No guarda = no.pai;
+                            SLR(no.pai.esq);
+                            SRR(guarda);
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                else if(no.pai.FB==-2)
-                {
-                    if(no.pai.dir.FB<=0)
-                        SLR(no.pai);
-                }
-                    
                 no = no.pai;
                 if(no==null) break;
             }
@@ -285,16 +306,56 @@ public class Arvore_AVL {
     }
     
     
-    private void SLR(No no){  //falta alguns detalhes na rotação
+    private void SLR(No no){ 
         No aux = no.dir;
-        if(aux.esq!=null)
-            aux.esq.pai = no; 
+        if(aux.esq!=null)          
+            aux.esq.pai = no;        
         no.dir = aux.esq;
         No pai = no.pai;
         no.pai = aux;
         aux.pai = pai;
+        if(pai!=null)
+        {
+            if(isLeft(aux))
+                pai.esq = aux;
+            else
+                pai.dir = aux;
+        }
         aux.esq = no;
         if(aux.pai==null) this.raiz = aux;
+        no.FB = no.FB+1 - min(aux.FB,0);
+        aux.FB = aux.FB + 1 + max(no.FB, 0);     
     }
+    
+    private void SRR(No no){
+        No aux = no.esq;
+        if(aux.dir!=null)
+            aux.dir.pai = no;
+        no.esq = aux.dir;
+        No pai = no.pai;
+        no.pai = aux;
+        aux.pai = pai;
+        if(pai!=null)
+        {
+            if(isLeft(aux))
+                pai.esq = aux;
+            else
+                pai.dir = aux;
+        }
+        aux.dir = no;
+        if(aux.pai==null) this.raiz = aux;
+        no.FB = no.FB - 1 - max(aux.FB,0);
+        aux.FB = aux.FB - 1 + min(no.FB,0);
+    }
+    
+    private int max(int a, int b)
+    {
+        return a>b? a:b;
+    }
+    private int min(int a, int b)
+    {
+        return a<b? a:b;
+    }
+            
     
 }
