@@ -150,31 +150,59 @@ public class Arvore_AVL {
       if (p == null) 
           System.out.println("Erro: Chave não encontrada");
       else if (chave > p.chave) 
-          p.dir = retira (chave,p.dir);
+          retira (chave,p.dir);
       else if (chave < p.chave) 
-          p.esq = retira (chave,p.esq);
+          retira (chave,p.esq);
       else
       {
           if (p.dir == null) 
           {
-              changeFb(p,false);
-              if(p.esq!=null){
-                  p.esq.pai = p.pai;
+              changeFb(p, false);
+              if(p.esq!=null)
+              {
+                p.esq.pai = p.pai;
+                if(isLeft(p)){
+                    p.pai.esq = p.esq;
+                }else{
+                    p.pai.dir = p.esq;
+                }
                   p = p.esq;
               }else
-                  p = p.esq;
-              
+              {
+                if(isLeft(p)){
+                    p.pai.esq = null;
+                }else{
+                    p.pai.dir = null;
+                }
+                p = p.esq;
+              }
           }
           else if (p.esq == null) 
           {
-              changeFb(p,false);
-              if(p.dir!=null){
-                  p.dir.pai = p.pai;
-                  p = p.dir;
+              changeFb(p, false);
+              if(p.dir!=null)
+              {
+                p.dir.pai = p.pai;
+                if(isLeft(p)){
+                    p.pai.esq = p.dir;
+                }else{
+                    p.pai.dir = p.dir;
+                }
+                p = p.dir;
               }else
-                  p = p.dir;
+              {
+                if(isLeft(p)){
+                    p.pai.esq = null;
+                }else{
+                    p.pai.dir = null;
+                }
+                p = p.dir;
+              }
+
           }
-          else doisFilhos (p,p.dir);
+          else 
+              doisFilhos (p,p.dir);
+
       }
       return p;
     }
@@ -253,7 +281,7 @@ public class Arvore_AVL {
         {
             OUTER:
             while (no.pai!=null) {
-                no.pai.FB += isLeft(no)? 1 : -1 ;
+                no.pai.FB += isLeft(no)? 1 : -1;
                 switch (no.pai.FB) {
                     case 0:
                         break OUTER;
@@ -286,12 +314,43 @@ public class Arvore_AVL {
                 no = no.pai;
                 if(no==null) break;
             }
-        }else
+        }
+        else
         {
             while(no.pai!=null)
             {
                 no.pai.FB += isLeft(no)? -1 : 1 ;
-                if(no.pai.FB!=0)
+                if(no.pai.FB==-2)
+                {
+                    if (no.pai.dir.FB<=0) 
+                    {
+                        SLR(no.pai);
+                        break;
+                    }
+                    else
+                    {
+                        No guarda = no.pai;
+                        SRR(no.pai.dir);
+                        SLR(guarda);
+                        break;
+                    }
+                }
+                else if(no.pai.FB==2)
+                {
+                    if (no.pai.esq.FB>=0) 
+                    {
+                        SRR(no.pai);
+                        break;
+                    }
+                    else
+                    {
+                        No guarda = no.pai;
+                        SLR(no.pai.esq);
+                        SRR(guarda);
+                        break;
+                    }
+                    
+                }else if(no.pai.FB!=0)
                 {
                     break;
                 }
