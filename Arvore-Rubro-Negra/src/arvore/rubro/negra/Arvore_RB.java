@@ -4,12 +4,34 @@ import static java.lang.Math.pow;
 import java.util.ArrayList;
 
 public class Arvore_RB {
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
     private class No
     {
         Object elemento;
         int chave;
-        boolean cor;
+        boolean cor; //true = Rubro, false = Negro
         No esq, dir,pai;
+        public No(Object elemento, int chave,No esq,No dir,No pai, boolean cor){
+            this.elemento = elemento;
+            this.chave = chave;
+            this.esq = esq;
+            this.dir = dir;
+            this.pai = pai;
+            this.cor = cor;
+        }
+        public void setDir(No no){
+            this.dir = no;
+        }
+        public void setEsq(No no){
+            this.esq = no;
+        }
+        public No getAvo(){
+            return this.pai.pai;
+        }
+        public No getTio(){
+            return isLeft(this)? this.getAvo().dir : this.getAvo().esq;
+        }
     }
     private No raiz;
     private int size;
@@ -32,7 +54,10 @@ public class Arvore_RB {
     }
     public void insere(int chave,Object elemento)
     {
-       this.raiz = this.insere(chave, elemento, raiz,null);
+       if (this.raiz == null)
+            this.raiz = this.insere(chave, elemento, this.raiz,null);
+       else
+           this.insere(chave, elemento, this.raiz,null);
        this.size++;
     }
     public void retira (int chave)
@@ -64,7 +89,10 @@ public class Arvore_RB {
     }
     public void ImprimeArvore()
     {   
+       if (this.raiz == null) System.out.println("Arvore vazia");
+       else{
        Object[][] arvore;
+       boolean[][] cores;
        double deep = (double) this.ProfundidadeTree();
        
        int l = this.ProfundidadeTree() + 1;
@@ -72,7 +100,7 @@ public class Arvore_RB {
        int c = ((int)pow(2.0,deep)*2) + 1;
        
        arvore = new Object[l][c];
-       
+       cores = new boolean[l][c];
        No no = this.raiz;
              
        //----------------------------------------------------------- 
@@ -84,7 +112,7 @@ public class Arvore_RB {
            }                                                        // 
        }                                                            //
        //-------------------------------------------------------------
-        this.PreencheMatriz(arvore,c/2, c,this.raiz);
+        this.PreencheMatriz(arvore,cores,c/2, c,this.raiz);
          //----------------------------------------------------------- 
        for(int x = 0; x < l;x++)                                    //
        {                                                            //
@@ -93,12 +121,15 @@ public class Arvore_RB {
                if (arvore[x][y].equals('-'))
                    System.out.print(String.format("%4c", arvore[x][y]));   
                else
-                   System.out.print(String.format("%4d", arvore[x][y]));  
+                   if(cores[x][y])
+                        System.out.print(String.format(ANSI_RED + "%4d" + ANSI_RESET, arvore[x][y]));  
+                   else
+                       System.out.print(String.format("%4d", arvore[x][y]));
            }                                                        //
            System.out.println();                                    // 
        }                                                            //
        //-------------------------------------------------------------
-        
+       }
     }
     public int ProfundidadeTree()
     {
@@ -116,42 +147,101 @@ public class Arvore_RB {
     {
         if (p==null)
         {
-            p = new No();
-            p.elemento = elemento; p.chave = chave;
-            if (pai!=null) p.pai = pai;
-            p.esq = null; p.dir = null;
+            p = new No(elemento, chave,null,null,pai,this.raiz!=null);
+            if(pai!=null){
+                if(isLeft(p))
+                {
+                    pai.setEsq(p);
+                }else
+                    pai.setDir(p);
+            }
+            if(p.pai!=null && p.pai.cor)
+            {
+                if(!p.getAvo().cor)
+                    insertCaso2(p);
+            }
+            
+            
         }
-        else if (chave > p.chave) p.dir = insere(chave,elemento,p.dir,p);
-        else if (chave < p.chave) p.esq = insere(chave,elemento,p.esq,p);
+        else if (chave > p.chave) insere(chave,elemento,p.dir,p);
+        else if (chave < p.chave) insere(chave,elemento,p.esq,p);
         else System.out.println("Erro: Chave já existente");
         return p;
     }
+    
+    private void insertCaso2(No no)
+    {
+        try{
+            if(no.getTio().cor){
+                if(no.getAvo()!=this.raiz)
+                {
+                    no.getAvo().cor = true;
+                }
+                no.pai.cor = false;
+                try{
+                    no.getTio().cor = false;
+                }catch(NullPointerException ex){}
+            }
+        }catch(NullPointerException ex){}
+        if(no.getAvo().pai!=null)  //parei aqui, to com sono
+        {
+            if(no.getAvo().pai.cor)
+                insertCaso2(no.getAvo().pai);
+        }
+    }
+    
     private No retira (int chave,No p)
     {
       if (p == null) 
           System.out.println("Erro: Chave não encontrada");
       else if (chave > p.chave) 
-          p.dir = retira (chave,p.dir);
+          retira (chave,p.dir);
       else if (chave < p.chave) 
-          p.esq = retira (chave,p.esq);
+          retira (chave,p.esq);
       else
       {
           if (p.dir == null) 
           {
-              if(p.esq!=null){
-                  p.esq.pai = p.pai;
+              if(p.esq!=null)
+              {
+                p.esq.pai = p.pai;
+                if(isLeft(p)){
+                    p.pai.esq = p.esq;
+                }else{
+                    p.pai.dir = p.esq;
+                }
                   p = p.esq;
               }else
-                  p = p.esq;
+              {
+                if(isLeft(p)){
+                    p.pai.esq = null;
+                }else{
+                    p.pai.dir = null;
+                }
+                p = p.esq;
+              }
               
           }
           else if (p.esq == null) 
           {
-              if(p.dir!=null){
-                  p.dir.pai = p.pai;
-                  p = p.dir;
+              if(p.dir!=null)
+              {
+                p.dir.pai = p.pai;
+                if(isLeft(p)){
+                    p.pai.esq = p.dir;
+                }else{
+                    p.pai.dir = p.dir;
+                }
+                p = p.dir;
               }else
-                  p = p.dir;
+              {
+                if(isLeft(p)){
+                    p.pai.esq = null;
+                }else{
+                    p.pai.dir = null;
+                }
+                p = p.dir;
+              }
           }
           else doisFilhos (p,p.dir);
       }
@@ -187,30 +277,34 @@ public class Arvore_RB {
         return r;
     }
     private int AlturaNo(No no)
-    {
-        if (no.pai!=null)
-        {
-            return 1 + AlturaNo(no.pai);
+    {   try{
+            if (no.pai!=null)
+            {
+                return 1 + AlturaNo(no.pai);
+            }
+        }catch(NullPointerException ex){         
+            System.out.println(ex);
         }
         return 0;
     }
-    private void PreencheMatriz(Object[][] matriz, int pos, int tam, No no)
+    private void PreencheMatriz(Object[][] matriz,boolean[][] cores, int pos, int tam, No no)
     {
         int alt = this.AlturaNo(no);
         matriz[alt][pos] = no.chave;
+        cores[alt][pos] = no.cor;
         if(no.dir!=null)
         {
             if (alt!=0)
-                this.PreencheMatriz(matriz, pos+((this.ProfundidadeTree())-alt), tam, no.dir);
+                this.PreencheMatriz(matriz, cores,pos+((this.ProfundidadeTree())-alt), tam, no.dir);
             else
-                this.PreencheMatriz(matriz, pos+(((tam-pos)/2)), tam, no.dir);
+                this.PreencheMatriz(matriz,cores, pos+(((tam-pos)/2)), tam, no.dir);
         }
         if(no.esq!=null)
         {
             if (alt!=0)
-                this.PreencheMatriz(matriz, pos-((this.ProfundidadeTree())-alt), tam, no.esq);
+                this.PreencheMatriz(matriz,cores, pos-((this.ProfundidadeTree())-alt), tam, no.esq);
             else
-                this.PreencheMatriz(matriz, pos-((pos/2)), tam, no.esq);
+                this.PreencheMatriz(matriz,cores, pos-((pos/2)), tam, no.esq);
         }          
     }
     private int ProfundidadeTree(No no)
@@ -224,5 +318,10 @@ public class Arvore_RB {
             
         return Direita+1;              
     }
-
+    
+    private boolean isLeft(No no)
+    {
+        return no.pai.chave>no.chave;
+    }
+    
 }
