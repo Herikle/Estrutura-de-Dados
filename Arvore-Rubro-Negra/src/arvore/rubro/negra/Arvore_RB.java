@@ -30,7 +30,7 @@ public class Arvore_RB {
             return this.pai.pai;
         }
         public No getTio(){
-            return isLeft(this)? this.getAvo().dir : this.getAvo().esq;
+            return isLeft(this.pai)? this.getAvo().dir : this.getAvo().esq;
         }
     }
     private No raiz;
@@ -169,24 +169,55 @@ public class Arvore_RB {
         return p;
     }
     
-    private void insertCaso2(No no)
+    private void insertCaso2(No no) 
     {
         try{
-            if(no.getTio().cor){
+            if(no.getTio()!=null && (no.getTio()).cor){
                 if(no.getAvo()!=this.raiz)
                 {
-                    no.getAvo().cor = true;
+                    (no.getAvo()).cor = true;
                 }
                 no.pai.cor = false;
                 try{
-                    no.getTio().cor = false;
+                    (no.getTio()).cor = false;
                 }catch(NullPointerException ex){}
+            }else{
+                insertCaso3(no);
+                return;
             }
         }catch(NullPointerException ex){}
-        if(no.getAvo().pai!=null)  //parei aqui, to com sono
+        if((no.getAvo()!=null) && ((no.getAvo()).pai!=null))  
         {
-            if(no.getAvo().pai.cor)
-                insertCaso2(no.getAvo().pai);
+            if((no.getAvo()).pai.cor)
+                insertCaso2((no.getAvo()));
+        }
+    }
+    
+    private void insertCaso3(No no){
+        //3a
+        if(isLeft(no.pai)){
+            //3a.1 Simples
+            if(isLeft(no)){
+                no.pai.cor = false;
+                no.pai.pai.cor = true;
+                SRR(no.pai);
+            }else//3a.2 Dupla
+            {
+                
+            }
+            
+        }//3b
+        else
+        {   //3b.1 Simples
+            if(isLeft(no))
+            {
+                no.pai.cor = false;
+                no.pai.pai.cor = true;
+                SLR(no.pai);
+            }else//3b.2 Dupla
+            {
+                
+            }
         }
     }
     
@@ -324,4 +355,41 @@ public class Arvore_RB {
         return no.pai.chave>no.chave;
     }
     
+    private void SLR(No no){ 
+        No aux = no.dir;
+        if(aux.esq!=null)          
+            aux.esq.pai = no;        
+        no.dir = aux.esq;
+        No pai = no.pai;
+        no.pai = aux;
+        aux.pai = pai;
+        if(pai!=null)
+        {
+            if(isLeft(aux))
+                pai.esq = aux;
+            else
+                pai.dir = aux;
+        }
+        aux.esq = no;
+        if(aux.pai==null) this.raiz = aux;   
+    }
+    
+    private void SRR(No no){
+        No aux = no.esq;
+        if(aux.dir!=null)
+            aux.dir.pai = no;
+        no.esq = aux.dir;
+        No pai = no.pai;
+        no.pai = aux;
+        aux.pai = pai;
+        if(pai!=null)
+        {
+            if(isLeft(aux))
+                pai.esq = aux;
+            else
+                pai.dir = aux;
+        }
+        aux.dir = no;
+        if(aux.pai==null) this.raiz = aux;
+    }
 }

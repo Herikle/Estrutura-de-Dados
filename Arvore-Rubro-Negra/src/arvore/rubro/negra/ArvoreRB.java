@@ -1,4 +1,4 @@
-//Main/Classe de teste
+    //Main/Classe de teste
 
 package arvore.rubro.negra;
 
@@ -12,6 +12,7 @@ public class ArvoreRB {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
         Scanner in = new Scanner(System.in); 
