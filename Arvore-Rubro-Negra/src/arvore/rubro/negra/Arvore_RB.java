@@ -194,31 +194,40 @@ public class Arvore_RB {
     }
     
     private void insertCaso3(No no){
-        //3a
-        if(isLeft(no.pai)){
-            //3a.1 Simples
-            if(isLeft(no)){
-                no.pai.cor = false;
-                no.pai.pai.cor = true;
-                SRR(no.pai);
-            }else//3a.2 Dupla
-            {
-                
-            }
-            
-        }//3b
-        else
-        {   //3b.1 Simples
-            if(isLeft(no))
-            {
-                no.pai.cor = false;
-                no.pai.pai.cor = true;
+       if(isLeft(no.pai))
+       {
+           if(isLeft(no))
+           {
+               No guarda = no.getAvo();
+               SRR(guarda);
+               guarda.cor = true;
+               guarda.pai.cor = false;
+           }else
+           {
+                No guarda = no.getAvo();
                 SLR(no.pai);
-            }else//3b.2 Dupla
-            {
-                
-            }
-        }
+                SRR(guarda);
+                guarda.cor = true;
+                guarda.pai.cor = false;
+           }
+       }else
+       {
+           if(!isLeft(no))
+           {
+               No guarda = no.getAvo();
+               SLR(guarda);
+               guarda.cor = true;
+               guarda.pai.cor = false;
+           }else
+           {
+                No guarda = no.getAvo();
+                SRR(no.pai);
+                SLR(guarda);
+                guarda.cor = true;
+                guarda.pai.cor = false;
+           }
+       }
+       
     }
     
     private No retira (int chave,No p)
@@ -391,5 +400,6 @@ public class Arvore_RB {
         }
         aux.dir = no;
         if(aux.pai==null) this.raiz = aux;
+
     }
 }
