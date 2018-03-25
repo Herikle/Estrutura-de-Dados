@@ -316,7 +316,7 @@ public class Arvore_RB {
               else{
                     if(wasLeft)
                     {
-                        if(!guarda.dir.cor) //parei aqui
+                        if(guarda.dir!=null && !guarda.dir.cor) //parei aqui
                         {
 
                             if((guarda.dir.dir!=null && guarda.dir.dir.cor) || (guarda.dir.esq!=null && guarda.dir.esq.cor))
@@ -326,7 +326,7 @@ public class Arvore_RB {
                         }
                     }else
                     {
-                        if(!guarda.esq.cor)
+                        if(guarda.esq!=null && !guarda.esq.cor)
                         {
                             if((guarda.esq.dir!=null && guarda.esq.dir.cor) || (guarda.esq.esq!=null && guarda.esq.esq.cor))
                             {
@@ -343,7 +343,7 @@ public class Arvore_RB {
     
     private void removeCase3(No no)
     {
-        //aqui também
+        //parei aqui
     }
     
     private void Inorder(No p, ArrayList a)
