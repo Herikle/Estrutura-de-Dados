@@ -235,11 +235,13 @@ public class Arvore_RB {
       if (p == null) 
           System.out.println("Erro: Chave não encontrada");
       else if (chave > p.chave) 
-          retira (chave,p.dir);
+          retira(chave,p.dir);
       else if (chave < p.chave) 
-          retira (chave,p.esq);
+          retira(chave,p.esq);
       else
       {
+          No guarda = p.pai;
+          boolean wasLeft = isLeft(p);
           if (p.dir == null) 
           {
               if(p.esq!=null)
@@ -248,7 +250,8 @@ public class Arvore_RB {
                 if(isLeft(p)){
                     p.pai.esq = p.esq;
                 }else{
-                    p.pai.dir = p.esq;
+                    if(p.pai!=null)
+                        p.pai.dir = p.esq;
                 }
                   p = p.esq;
               }else
@@ -256,11 +259,36 @@ public class Arvore_RB {
                 if(isLeft(p)){
                     p.pai.esq = null;
                 }else{
-                    p.pai.dir = null;
+                    if(p.pai!=null)
+                        p.pai.dir = null;
                 }
+                
                 p = p.esq;
-              }
-              
+              }     
+              if(p!=null && p.cor) 
+                  p.cor = false;
+              else{
+                    if(wasLeft)
+                    {
+                        if(!guarda.dir.cor)
+                        {
+
+                            if((guarda.dir.dir!=null && guarda.dir.dir.cor) || (guarda.dir.esq!=null && guarda.dir.esq.cor))
+                            {
+                                
+                            }
+                        }
+                    }else
+                    {
+                        if(!guarda.esq.cor)
+                        {
+                            if((guarda.esq.dir!=null && guarda.esq.dir.cor) || (guarda.esq.esq!=null && guarda.esq.esq.cor))
+                            {
+
+                            }
+                        }
+                    }                     
+                }
           }
           else if (p.esq == null) 
           {
@@ -270,7 +298,8 @@ public class Arvore_RB {
                 if(isLeft(p)){
                     p.pai.esq = p.dir;
                 }else{
-                    p.pai.dir = p.dir;
+                    if(p.pai!=null)
+                        p.pai.dir = p.dir;
                 }
                 p = p.dir;
               }else
@@ -282,11 +311,41 @@ public class Arvore_RB {
                 }
                 p = p.dir;
               }
+              if(p!=null && p.cor) 
+                  p.cor = false;
+              else{
+                    if(wasLeft)
+                    {
+                        if(!guarda.dir.cor) //parei aqui
+                        {
+
+                            if((guarda.dir.dir!=null && guarda.dir.dir.cor) || (guarda.dir.esq!=null && guarda.dir.esq.cor))
+                            {
+                                removeCase3(guarda);
+                            }
+                        }
+                    }else
+                    {
+                        if(!guarda.esq.cor)
+                        {
+                            if((guarda.esq.dir!=null && guarda.esq.dir.cor) || (guarda.esq.esq!=null && guarda.esq.esq.cor))
+                            {
+                                removeCase3(guarda);
+                            }
+                        }
+                    }                     
+                }
           }
           else doisFilhos (p,p.dir);
       }
       return p;
     }
+    
+    private void removeCase3(No no)
+    {
+        //aqui também
+    }
+    
     private void Inorder(No p, ArrayList a)
     {
         if(p!=null)
@@ -302,6 +361,12 @@ public class Arvore_RB {
             r.esq = doisFilhos(q, r.esq);
         else
         {
+            if(!q.cor && r.cor){
+                r.cor = false;
+            }
+            else if(!q.cor && !r.cor){
+                //irei fazer
+            }
             q.chave = r.chave; 
             q.elemento = r.elemento; 
             if(q.dir == r)
@@ -361,6 +426,8 @@ public class Arvore_RB {
     
     private boolean isLeft(No no)
     {
+        if(no.pai==null) return false;
+        
         return no.pai.chave>no.chave;
     }
     
