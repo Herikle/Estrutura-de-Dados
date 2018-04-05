@@ -62,7 +62,7 @@ public class Arvore_RB {
     }
     public void retira (int chave)
     {
-       this.raiz = this.retira(chave,this.raiz);
+       this.retira(chave,this.raiz);
        this.size--;
     }
     public void imprime()
@@ -242,108 +242,106 @@ public class Arvore_RB {
       {
           No guarda = p.pai;
           boolean wasLeft = isLeft(p);
-          if (p.dir == null) 
+          boolean doubleBlack = false;
+           if (p.dir == null) 
           {
               if(p.esq!=null)
               {
+                if(p.cor && !p.esq.cor || !p.cor && p.esq.cor) //cobre caso 2
+                    p.esq.cor = false;  
+                else if(!p.cor && !p.esq.cor)
+                    doubleBlack = true;
                 p.esq.pai = p.pai;
-                if(isLeft(p)){
+                if(isLeft(p))
                     p.pai.esq = p.esq;
-                }else{
-                    if(p.pai!=null)
-                        p.pai.dir = p.esq;
-                }
-                  p = p.esq;
-              }else
-              {
-                if(isLeft(p)){
-                    p.pai.esq = null;
-                }else{
-                    if(p.pai!=null)
-                        p.pai.dir = null;
-                }
-                
+                else
+                    p.pai.dir = p.esq;
                 p = p.esq;
-              }     
-              if(p!=null && p.cor) 
-                  p.cor = false;
-              else{
-                    if(wasLeft)
-                    {
-                        if(!guarda.dir.cor)
-                        {
-
-                            if((guarda.dir.dir!=null && guarda.dir.dir.cor) || (guarda.dir.esq!=null && guarda.dir.esq.cor))
-                            {
-                                
-                            }
-                        }
-                    }else
-                    {
-                        if(!guarda.esq.cor)
-                        {
-                            if((guarda.esq.dir!=null && guarda.esq.dir.cor) || (guarda.esq.esq!=null && guarda.esq.esq.cor))
-                            {
-
-                            }
-                        }
-                    }                     
-                }
+              }
+              else
+              {
+                if(!p.cor) doubleBlack = true;
+                if(isLeft(p))
+                    p.pai.esq = null;
+                else
+                    p.pai.dir = null;
+                p = null;
+              }
+              if(doubleBlack)
+              { 
+                Situation3(guarda,wasLeft);
+              }
           }
           else if (p.esq == null) 
           {
-              if(p.dir!=null)
-              {
-                p.dir.pai = p.pai;
-                if(isLeft(p)){
-                    p.pai.esq = p.dir;
-                }else{
-                    if(p.pai!=null)
-                        p.pai.dir = p.dir;
-                }
-                p = p.dir;
+              if(p.dir!=null){
+                  if(p.cor && !p.dir.cor || !p.cor && p.dir.cor) //cobre caso 2
+                      p.dir.cor = false;
+                  else if(!p.cor && !p.dir.cor)
+                      doubleBlack = true;
+                  p.dir.pai = p.pai;
+                  if(isLeft(p))
+                      p.pai.esq = p.dir;
+                  else
+                      p.pai.dir = p.dir;
+                  p = p.dir;
               }else
               {
-                if(isLeft(p)){
+                if(!p.cor) doubleBlack = true;
+                if(isLeft(p))
                     p.pai.esq = null;
-                }else{
+                else
                     p.pai.dir = null;
-                }
-                p = p.dir;
+                p = null;
               }
-              if(p!=null && p.cor) 
-                  p.cor = false;
-              else{
-                    if(wasLeft)
-                    {
-                        if(guarda.dir!=null && !guarda.dir.cor) //parei aqui
-                        {
-
-                            if((guarda.dir.dir!=null && guarda.dir.dir.cor) || (guarda.dir.esq!=null && guarda.dir.esq.cor))
-                            {
-                                removeCase3(guarda);
-                            }
-                        }
-                    }else
-                    {
-                        if(guarda.esq!=null && !guarda.esq.cor)
-                        {
-                            if((guarda.esq.dir!=null && guarda.esq.dir.cor) || (guarda.esq.esq!=null && guarda.esq.esq.cor))
-                            {
-                                removeCase3(guarda);
-                            }
-                        }
-                    }                     
-                }
+              if(doubleBlack)
+              {
+                  Situation3(guarda,wasLeft);
+              }
           }
           else doisFilhos (p,p.dir);
       }
       return p;
     }
     
-    private void removeCase3(No no)
-    {
-        //parei aqui
+    private void Situation3(No pai, boolean left){
+        if(pai==null){
+            
+        }
+        else if(left)
+        {
+            if(!pai.dir.cor){
+                if((pai.dir.dir!=null && pai.dir.dir.cor) || (pai.dir.esq!=null && pai.dir.esq.cor)){
+                    if(pai.dir.dir!=null && pai.dir.dir.cor)
+                    {
+                        pai.dir.dir.cor = false;
+                        SLR(pai);
+                    }
+                    else if(pai.dir.esq!=null && pai.dir.esq.cor)
+                    {
+                        No guarda = pai;
+                        pai.dir.esq.cor = false;
+                        SRR(pai.dir);
+                        SLR(guarda);
+                    }
+                }
+            }
+        }else{
+            if(!pai.esq.cor){
+                if((pai.esq.dir!=null && pai.esq.dir.cor) || (pai.esq.esq!=null && pai.esq.esq.cor)){
+                    if(pai.esq.esq!=null && pai.esq.esq.cor)
+                    {
+                        pai.esq.esq.cor = false;
+                        SRR(pai);
+                    }else if(pai.esq.dir!=null && pai.esq.dir.cor){
+                        No guarda = pai;
+                        pai.esq.dir.cor = false;
+                        SLR(pai.esq);
+                        SRR(guarda);
+                    }
+                }
+            }
+        }
     }
     
     private void Inorder(No p, ArrayList a)
@@ -361,23 +359,27 @@ public class Arvore_RB {
             r.esq = doisFilhos(q, r.esq);
         else
         {
-            if(!q.cor && r.cor){
-                r.cor = false;
-            }
-            else if(!q.cor && !r.cor){
-                //irei fazer
-            }
+            No guarda = q.pai;
+            boolean wasLeft = isLeft(q);
+            boolean doubleBlack = false;
+            if(q.cor && !r.cor || !q.cor && r.cor)//cobre caso 1 e caso 2
+                r.cor = false;    
+            else if(!q.cor && !r.cor)
+                doubleBlack = true;
             q.chave = r.chave; 
             q.elemento = r.elemento; 
             if(q.dir == r)
                 q.dir = null;
             try{
+                r.dir.pai = r.pai;
                 r = r.dir;
             }
             catch(NullPointerException ex)
             {
                 r = null;
             }
+            if(doubleBlack)
+                Situation3(guarda,wasLeft);
         }
         return r;
     }

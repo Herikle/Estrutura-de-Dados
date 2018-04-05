@@ -176,6 +176,7 @@ public class ArvorePesquisa {
             if(q.dir == r)
                 q.dir = null;
             try{
+                r.dir.pai = r.pai;
                 r = r.dir;
             }
             catch(NullPointerException ex)
